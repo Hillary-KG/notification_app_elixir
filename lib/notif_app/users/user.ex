@@ -4,7 +4,7 @@ defmodule NotifApp.Users.User do
 
   schema "users" do
     field :bio, :string
-    field :contacts, {:array, :string}
+    # field :contacts, {:array, :string}
     field :dob, :date
     field :first_name, :string
     field :last_name, :string
@@ -13,6 +13,7 @@ defmodule NotifApp.Users.User do
     field :status, :string, default: "active"
     belongs_to :account, NotifApp.Accounts.Account
     has_many :messages, NotifApp.Messages.Message
+    has_many :contacts, NotifApp.Contacts.Contact
 
     timestamps(type: :utc_datetime)
   end
@@ -20,7 +21,7 @@ defmodule NotifApp.Users.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:account_id, :first_name, :last_name, :msisdn, :contacts, :dob, :bio, :plan, :status])
+    |> cast(attrs, [:account_id, :first_name, :last_name, :msisdn, :dob, :bio, :plan, :status])
     |> validate_required([:account_id, :first_name, :last_name, :msisdn, :plan, :status])
     |> unique_constraint(:msisdn)
   end

@@ -1,0 +1,33 @@
+<.header>
+  <div class="flex gap-2">
+    <h1 class="grow text-2xl font-bold">New Message</h1>
+    <.link patch={~p"/contacts"}>
+      <.button>View contacts</.button>
+    </.link>
+  </div>
+  <div>
+    <.form
+      for={@form}
+      phx-submit="submit"
+    >
+    <div class="grow">
+      <.input field={@form[:subject]} type="text" label="Subject"/>
+    </div>
+    <div class="grow">
+      <.input field={@form[:text]} type="text" label="Message"/>
+    </div>
+    <div class="grow mb-2">
+      <.input
+          field={@form[:recipients]}
+          type="select"
+          multiple
+          label="Recipients"
+          options={@contacts}
+        />
+    </div>
+    <button class="bg-black border border-black hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-md">
+      Send
+    </button>
+    </.form>
+  </div>
+</.header>

@@ -24,7 +24,7 @@ defmodule NotifAppWeb.MessageLive.FormComponent do
           type="select"
           multiple
           label="Recipients"
-          options={[{"Option 1", "option1"}, {"Option 2", "option2"}]}
+          options={@contacts}
         />
         <.input field={@form[:text]} type="text" label="Text" />
         <.input field={@form[:type]} type="text" label="Type" />

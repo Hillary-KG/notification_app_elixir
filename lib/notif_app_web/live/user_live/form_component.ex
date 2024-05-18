@@ -22,17 +22,34 @@ defmodule NotifAppWeb.UserLive.FormComponent do
         <.input field={@form[:first_name]} type="text" label="First name" />
         <.input field={@form[:last_name]} type="text" label="Last name" />
         <.input field={@form[:msisdn]} type="text" label="Msisdn" />
-        <.input
+        <%!-- <.input
           field={@form[:contacts]}
           type="select"
           multiple
           label="Contacts"
           options={[{"Option 1", "option1"}, {"Option 2", "option2"}]}
-        />
-        <.input field={@form[:dob]} type="date" label="Dob" />
+        /> --%>
+        <.input field={@form[:dob]} type="date" label="Dob" />      
         <.input field={@form[:bio]} type="text" label="Bio" />
+        <.input
+          field={@form[:plan]}
+          type="select"
+          label="Plan"
+          value="Silver"
+          options={[{"Silver", "silver"}, {"Gold", "gold"}]}
+        />
+
+        <.input
+          field={@form[:status]}
+          type="select"
+          label="Status"
+          value="Active"
+          options = {[{"Activate", "active"}, {"Deactivate", "inactive"}]}
+        />
+
         <.input field={@form[:plan]} type="text" label="Plan" />
         <.input field={@form[:status]} type="text" label="Status" />
+
         <:actions>
           <.button phx-disable-with="Saving...">Save User</.button>
         </:actions>

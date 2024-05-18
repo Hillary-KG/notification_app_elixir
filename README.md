@@ -16,3 +16,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+
+
+<!-- export SMTP_PORT=465 && export ADMIN_EMAIL=hello@gingerlyke.com && export SMTP_USERNAME=hello@gingerlyke.com && export SMTP_PASSWORD=Kmz7Ev5vwrZZH3X! -->

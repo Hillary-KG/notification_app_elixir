@@ -12,7 +12,7 @@ defmodule NotifApp.Accounts.AccountNotifier do
       |> subject(subject)
       |> text_body(body)
 
-    with {:ok, _metadata} <- Mailer.deliver(email) do
+    with {:ok, _metadata} <- Mailer.deliver_later(email) do
       {:ok, email}
     end
   end

@@ -1,8 +1,7 @@
 defmodule NotifAppWeb.AccountRegistrationLive do
   use NotifAppWeb, :live_view
 
-  alias NotifApp.Accounts
-  alias NotifApp.Accounts.Account
+  alias NotifApp.{Accounts.Account, Accounts, Users}
 
   def render(assigns) do
     ~H"""
@@ -31,6 +30,13 @@ defmodule NotifAppWeb.AccountRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
+        <.input field={@form[:first_name]} type="text" label="First Name" required />
+        <.input field={@form[:last_name]} type="text" label="Last Name" required />
+        <.input field={@form[:msisdn]} type="text" label="Phone Number" required />
+        <%!-- <.input field={@form[:dob]} type="text" label="Date" required />
+        <.input field={@form[:email]} type="text" label="First Name" required /> --%>
+        <%!-- <.input field={@form[:email]} type="text" label="First Name" required /> --%>
+
         <.input field={@form[:email]} type="email" label="Email" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
@@ -55,19 +61,51 @@ defmodule NotifAppWeb.AccountRegistrationLive do
 
   def handle_event("save", %{"account" => account_params}, socket) do
     case Accounts.register_account(account_params) do
+
       {:ok, account} ->
-        {:ok, _} =
-          Accounts.deliver_account_confirmation_instructions(
-            account,
-            &url(~p"/accounts/confirm/#{&1}")
-          )
-
-        changeset = Accounts.change_account_registration(account)
-        {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
-
+        IO.inspect(account_params)
+        case Users.create_user(account, account_params) do
+          {:ok, _user} ->
+            {:ok, _} =
+              # Accounts.deliver_account_confirmation_instructions(
+              #   account,
+              #   &url(~p"/accounts/confirm/#{&1}")
+              #   )
+                changeset = Accounts.change_account_registration(account)
+                {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
+          {:error, %Ecto.Changeset{} = changeset} ->
+                  {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+           end
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+              {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+
     end
+    # with {:ok, account} <- Accounts.register_account(account_params),
+    #       {:ok, _user} <- Users.create_user(account, account_params)
+    #       do
+
+    #         else
+    #           {:error, %Ecto.Changeset{} = changeset} ->
+    #             {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+    #       end
+    # case Accounts.register_account(account_params) do
+    #   {:ok, account} ->
+    #     case Users.create_user(account, account_params) do
+    #       {:ok, _user} ->
+    #         IO.inspect(account)
+    #         {:ok, _} =
+    #           Accounts.deliver_account_confirmation_instructions(
+    #             account,
+    #             &url(~p"/accounts/confirm/#{&1}")
+    #           )
+    #         changeset = Accounts.change_account_registration(account)
+    #         {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
+    #       {:error, %Ecto.Changeset{} = changeset} ->
+    #           {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+    #       end
+    #   {:error, %Ecto.Changeset{} = changeset} ->
+    #     {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+    # end
   end
 
   def handle_event("validate", %{"account" => account_params}, socket) do

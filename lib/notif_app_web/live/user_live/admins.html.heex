@@ -1,0 +1,50 @@
+<.header>
+  Admins
+  <:actions>
+    <.link patch={~p"/admins/new"}>
+      <.button>New Admin</.button>
+    </.link>
+  </:actions>
+</.header>
+
+
+
+
+<.table
+  id="users"
+  rows={@streams.users}
+  row_click={fn {_id, user} -> JS.navigate(~p"/users/#{user}") end}
+>
+  <:col :let={{_id, user}} label="First name"><%= user.user.first_name %></:col>
+  <:col :let={{_id, user}} label="Last name"><%= user.user.last_name %></:col>
+  <:col :let={{_id, user}} label="Msisdn"><%= user.user.msisdn %></:col>
+  <:col :let={{_id, user}} label="Plan"><%= user.user.plan %></:col>
+  <:col :let={{_id, user}} label="Status"><%= user.user.status %></:col>
+  <:action :let={{_id, user}}>
+
+    <.button>
+      <.link patch={~p"/users/#{user}/edit"}>Edit</.link>
+    </.button>
+  </:action>
+  <:action :let={{id, user}}>
+    <.button>
+      <.link
+        phx-click={JS.push("delete", value: %{id: user.user.id}) |> hide("##{id}")}
+        data-confirm="Are you sure?"
+      >
+        Delete
+      </.link>
+    </.button>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="admin-modal" show on_cancel={JS.patch(~p"/admins")}>
+  <.live_component
+    module={NotifAppWeb.UserLive.FormComponent}
+    id={@admin.id || :new}
+    title={@page_title}
+    action={@live_action}
+    admin={@admin}
+    patch={~p"/admins"}
+  />
+</.modal>

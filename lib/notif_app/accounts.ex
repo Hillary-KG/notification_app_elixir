@@ -60,6 +60,21 @@ defmodule NotifApp.Accounts do
   """
   def get_account!(id), do: Repo.get!(Account, id)
 
+
+  def list_admins() do
+    Account
+    |> where(is_admin: true)
+    |> Repo.all()
+    |> Repo.preload(:user)
+  end
+
+  def list_superusers() do
+    Account
+    |> where(is_superuser: true)
+    |> Repo.all()
+    |> Repo.preload(:user)
+  end
+
   ## Account registration
 
   @doc """
@@ -92,6 +107,9 @@ defmodule NotifApp.Accounts do
   def change_account_registration(%Account{} = account, attrs \\ %{}) do
     Account.registration_changeset(account, attrs, hash_password: false, validate_email: false)
   end
+  # def change_account_registration(%User{} = account, attrs \\ %{}) do
+  #   Account.registration_changeset(account, attrs, hash_password: false, validate_email: false)
+  # end
 
   ## Settings
 

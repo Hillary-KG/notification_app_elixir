@@ -37,6 +37,12 @@ defmodule NotifApp.Users do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_user_by_account_id(account_id) do
+    User
+    |> where(account_id: ^account_id)
+    |> Repo.one()
+  end
+
   @doc """
   Creates a user.
 
@@ -49,8 +55,12 @@ defmodule NotifApp.Users do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs \\ %{}) do
-    %User{}
+  def create_user(account, attrs \\ %{}) do
+    # %User{}
+    IO.puts("creating user !!!!!!!!!!!!!!!!!!!!!!!")
+    # IO.inspect(account)
+    account
+    |> Ecto.build_assoc(:user)
     |> User.changeset(attrs)
     |> Repo.insert()
   end

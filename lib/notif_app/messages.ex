@@ -17,8 +17,11 @@ defmodule NotifApp.Messages do
       [%Message{}, ...]
 
   """
-  def list_messages do
-    Repo.all(Message)
+  def list_messages(user_id) do
+    Repo.all(
+      from msg in Message,
+      where: msg.user_id == ^user_id
+    )
   end
 
   @doc """

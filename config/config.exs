@@ -29,7 +29,20 @@ config :notif_app, NotifAppWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :notif_app, NotifApp.Mailer, adapter: Swoosh.Adapters.Local
+config :notif_app, NotifApp.Mailer,
+    adapter: Swoosh.Adapters.Local
+    # adapter: Bamboo.SMTPAdapter,
+    # server: "smtp.hostinger.com",
+    # port: System.get_env("SMTP_PORT"),
+    # username: System.get_env("SMTP_USERNAME"),
+    # password: System.get_env("SMTP_PASSWORD"),
+    # tls: :if_available, # can be `:always` or `:never`
+    # ssl: false, # can be `true`
+    # retries: 1,
+    # hackney_opts: [
+    #   recv_timeout: :timer.minutes(1),
+    #   connect_timeout: :timer.minutes(1)
+    # ]
 
 # Configure esbuild (the version is required)
 config :esbuild,

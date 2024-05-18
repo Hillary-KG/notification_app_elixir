@@ -174,6 +174,21 @@ defmodule NotifAppWeb.AccountAuth do
     end
   end
 
+  def on_mount(:ensure_admin, _params, session, socket) do
+    socket = mount_current_account(socket, session)
+
+    if socket.assigns.current_account.is_admin do
+      {:cont, socket}
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(:error, "You must log in as admin to access this page.")
+        |> Phoenix.LiveView.redirect(to: ~p"/accounts/log_in")
+
+      {:halt, socket}
+    end
+  end
+
   defp mount_current_account(socket, session) do
     Phoenix.Component.assign_new(socket, :current_account, fn ->
       if account_token = session["account_token"] do
@@ -221,6 +236,70 @@ defmodule NotifAppWeb.AccountAuth do
 
   defp maybe_store_return_to(%{method: "GET"} = conn) do
     put_session(conn, :account_return_to, current_path(conn))
+  end
+
+  def require_admin_user(%{current_account: current_account} = conn, _opts) do
+    IO.inspect(current_account)
+    if current_account.is_admin do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in as admin to access this page.")
+      |> maybe_store_return_to()
+      |> redirect(to: ~p"/accounts/log_in")
+      |> halt()
+    end
+  end
+
+  def require_admin_user(conn, _opts) do
+    if conn.assigns[:current_account] do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in as admin to access this page.")
+      |> maybe_store_return_to()
+      |> redirect(to: ~p"/accounts/log_in")
+      |> halt()
+    end
+  end
+
+  def on_mount(:ensure_superuser, _params, session, socket) do
+    socket = mount_current_account(socket, session)
+
+    if socket.assigns.current_account.is_superuser do
+      {:cont, socket}
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(:error, "You must log in as superuser to access this page.")
+        |> Phoenix.LiveView.redirect(to: ~p"/accounts/log_in")
+
+      {:halt, socket}
+    end
+  end
+  def require_superuser(%{current_account: current_account} = conn, _opts) do
+    IO.inspect(current_account)
+    if current_account.is_superuser do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in as superuser to access this page.")
+      |> maybe_store_return_to()
+      |> redirect(to: ~p"/accounts/log_in")
+      |> halt()
+    end
+  end
+
+  def require_superuser(conn, _opts) do
+    if conn.assigns[:current_account] do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in as superuser to access this page.")
+      |> maybe_store_return_to()
+      |> redirect(to: ~p"/accounts/log_in")
+      |> halt()
+    end
   end
 
   defp maybe_store_return_to(conn), do: conn

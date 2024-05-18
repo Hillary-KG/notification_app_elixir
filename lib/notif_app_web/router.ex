@@ -68,7 +68,29 @@ defmodule NotifAppWeb.Router do
       on_mount: [{NotifAppWeb.AccountAuth, :ensure_authenticated}] do
       live "/accounts/settings", AccountSettingsLive, :edit
       live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_email
+
+      #messages
+      live "/home",  MessageLive.Index, :index
+      live "/messages/new", MessageLive.New
+      live "/contacts", ContactLive.Index, :index
+      live "/contacts/new", ContactLive.Index, :new
     end
+  end
+
+  scope "/admin_dashboard", NotifAppWeb do
+    pipe_through [:browser, :require_admin_user, :require_superuser]
+
+    live_session :require_admin_user,
+      on_mount: [{NotifAppWeb.AccountAuth, :ensure_admin}] do
+      live "/home", AdminLive.Index
+      live "/users", UserLive.Index
+      live "/users/update/:id", UserLive.Update
+      end
+    live_session :require_superuser,
+      on_mount: [{NotifAppWeb.AccountAuth, :ensure_superuser}] do
+      live "/admins", UserLive.Admins
+      end
+
   end
 
   scope "/", NotifAppWeb do

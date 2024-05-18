@@ -1,5 +1,4 @@
 defmodule NotifApp.Accounts.Account do
-  alias NotifApp.Users
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -10,7 +9,7 @@ defmodule NotifApp.Accounts.Account do
     field :confirmed_at, :naive_datetime
     field :is_admin, :boolean, default: false
     field :is_superuser, :boolean, default: false
-    has_one :user, Users.User
+    has_one :user, NotifApp.Users.User
     field :status, :string, default: "active"
 
     timestamps(type: :utc_datetime)
@@ -57,7 +56,7 @@ defmodule NotifApp.Accounts.Account do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 72)
+    |> validate_length(:password, min: 6, max: 72)
     # Examples of additional password validation:
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")

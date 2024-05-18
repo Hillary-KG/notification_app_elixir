@@ -58,7 +58,10 @@ defmodule NotifApp.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.2"}
+      {:bandit, "~> 1.2"},
+      {:bamboo, "~> 2.0.0"},
+      {:bamboo_smtp, "~> 4.0.0"},
+      {:bamboo_phoenix, "~> 1.0.0"}
     ]
   end
 
