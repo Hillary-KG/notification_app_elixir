@@ -1,5 +1,4 @@
 defmodule NotifAppWeb.ContactLive.FormComponent do
-  alias NotifApp.Users
   use NotifAppWeb, :live_component
 
   alias NotifApp.Contacts
@@ -10,7 +9,7 @@ defmodule NotifAppWeb.ContactLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Add new contact</:subtitle>
+        <:subtitle>Manage contact</:subtitle>
       </.header>
 
       <.simple_form

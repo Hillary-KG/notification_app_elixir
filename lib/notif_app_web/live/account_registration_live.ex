@@ -67,10 +67,10 @@ defmodule NotifAppWeb.AccountRegistrationLive do
         case Users.create_user(account, account_params) do
           {:ok, _user} ->
             {:ok, _} =
-              # Accounts.deliver_account_confirmation_instructions(
-              #   account,
-              #   &url(~p"/accounts/confirm/#{&1}")
-              #   )
+              Accounts.deliver_account_confirmation_instructions(
+                account,
+                &url(~p"/accounts/confirm/#{&1}")
+                )
                 changeset = Accounts.change_account_registration(account)
                 {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
           {:error, %Ecto.Changeset{} = changeset} ->

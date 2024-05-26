@@ -1,10 +1,22 @@
 defmodule NotifAppWeb.UserLive.Index do
   use NotifAppWeb, :live_view
-  alias NotifApp.{Users}
+  alias NotifApp.{Users, Messages, Contacts, Groups}
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :users, Users.list_users())}
+    account_id = socket.assigns.current_account.id
+    user = Users.get_user_by_account_id(account_id)
+    messages = Messages.list_messages(user.id)
+    contacts = Contacts.list_contacts(user.id)
+    groups = Groups.list_groups(user.id)
+
+    {:ok,
+      socket
+      |> stream(:messages, messages)
+      |> stream(:contacts, contacts)
+      |> stream(:groups, groups)
+    }
+    # {:ok, stream(socket, :users, Users.list_users())}
   end
 
   # @impl true
@@ -42,4 +54,11 @@ defmodule NotifAppWeb.UserLive.Index do
 
   #   {:noreply, stream_delete(socket, :users, user)}
   # end
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    message = Messages.get_message!(id)
+    {:ok, _} = Messages.delete_message(message)
+
+    {:noreply, stream_delete(socket, :messages, message)}
+  end
 end

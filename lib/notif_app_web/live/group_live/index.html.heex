@@ -1,0 +1,45 @@
+<.header>
+  Your Groups
+  <:actions>
+    <.link patch={~p"/groups/new"}>
+      <.button>New Group</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="groups"
+  rows={@streams.groups}
+  row_click={fn {_id, group} -> JS.navigate(~p"/groups/#{group}") end}
+>
+  <:col :let={{_id, group}} label="Name"><%= group.name %></:col>
+  <:col :let={{_id, group}} label="Status"><%= group.status %></:col>
+  <:col :let={{_id, group}} label="Contacts"><%= if is_nil(group.contacts), do: "[ ]", else: Enum.map_join(group.contacts, ", ", &to_string/1)%></:col>
+  <:action :let={{_id, group}}>
+    <div class="sr-only">
+      <.link navigate={~p"/groups/#{group}"}>Show</.link>
+    </div>
+    <.link patch={~p"/groups/edit/#{group}"}>Edit</.link>
+  </:action>
+  <:action :let={{id, group}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: group.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+<.back navigate={~p"/home"}>Home</.back>
+<.modal :if={@live_action in [:new, :edit]} id="group-modal" show on_cancel={JS.patch(~p"/groups")}>
+  <.live_component
+    module={NotifAppWeb.GroupLive.FormComponent}
+    id={@group.id || :new}
+    title={@page_title}
+    action={@live_action}
+    group={@group}
+    patch={~p"/groups"}
+    user_id={@user_id}
+    contacts={@contacts}
+  />
+</.modal>

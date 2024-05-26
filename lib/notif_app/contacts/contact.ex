@@ -1,4 +1,5 @@
 defmodule NotifApp.Contacts.Contact do
+  alias NotifApp.{Users.User}
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +7,7 @@ defmodule NotifApp.Contacts.Contact do
     field :email_address, :string
     field :first_name, :string
     field :last_name, :string
-    belongs_to :user, NotifApp.Users.User
+    belongs_to :user, User
 
     timestamps(type: :utc_datetime)
   end

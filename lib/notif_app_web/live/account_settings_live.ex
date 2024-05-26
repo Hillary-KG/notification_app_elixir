@@ -147,6 +147,7 @@ defmodule NotifAppWeb.AccountSettingsLive do
     {:noreply, assign(socket, password_form: password_form, current_password: password)}
   end
 
+
   def handle_event("update_password", params, socket) do
     %{"current_password" => password, "account" => account_params} = params
     account = socket.assigns.current_account
@@ -162,6 +163,34 @@ defmodule NotifAppWeb.AccountSettingsLive do
 
       {:error, changeset} ->
         {:noreply, assign(socket, password_form: to_form(changeset))}
+    end
+  end
+  
+  def handle_event("validate_role", params, socket) do
+    %{"current_role" => role, "account" => account_params} = params
+
+    role_form =
+      socket.assigns.current_account
+      |> Accounts.change_account_role(account_params)
+      |> to_form()
+
+    {:noreply, assign(socket, password_form: role_form, current_role: role)}
+  end
+
+  def handle_event("update_account_role", params, socket) do
+    %{"account"=> account_params } = params
+    account = socket.assigns.current_account
+
+    case Accounts.update_account_role(account, account_params) do
+      {:ok, account} ->
+        role_form =
+          account
+          |> Accounts.change_account_role(account_params)
+          |> to_form()
+
+          {:noreply, assign(socket, trigger_submit: true, role_form: role_form)}
+      {:error, changeset} ->
+            {:noreply, assign(socket, role_form: to_form(changeset))}
     end
   end
 end

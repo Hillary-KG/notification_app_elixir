@@ -1,11 +1,6 @@
 <.header>
   Message <%= @message.id %>
   <:subtitle>This is a message record from your database.</:subtitle>
-  <:actions>
-    <.link patch={~p"/messages/#{@message}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit message</.button>
-    </.link>
-  </:actions>
 </.header>
 
 <.list>
@@ -13,9 +8,10 @@
   <:item title="Text"><%= @message.text %></:item>
   <:item title="Type"><%= @message.type %></:item>
   <:item title="Status"><%= @message.status %></:item>
+  <:item title="Status"><%= Calendar.strftime(@message.inserted_at, "%y-%m-%d %I:%M:%S %p") %></:item>
 </.list>
 
-<.back navigate={~p"/messages"}>Back to messages</.back>
+<.back navigate={~p"/home"}>Back to messages</.back>
 
 <.modal :if={@live_action == :edit} id="message-modal" show on_cancel={JS.patch(~p"/messages/#{@message}")}>
   <.live_component

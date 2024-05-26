@@ -19,7 +19,12 @@ defmodule NotifAppWeb.ContactLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
+
+    account_id = socket.assigns.current_account.id
+    user = Users.get_user_by_account_id(account_id)
+    # IO.inspect(user)
     socket
+    |> assign(:user_id, user.id)
     |> assign(:page_title, "Edit Contact")
     |> assign(:contact, Contacts.get_contact!(id))
   end
@@ -27,7 +32,7 @@ defmodule NotifAppWeb.ContactLive.Index do
   defp apply_action(socket, :new, _params) do
     account_id = socket.assigns.current_account.id
     user = Users.get_user_by_account_id(account_id)
-    IO.inspect(user)
+    # IO.inspect(user)
     socket
     |> assign(:user_id, user.id)
     |> assign(:page_title, "New Contact")

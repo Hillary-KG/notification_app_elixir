@@ -16,6 +16,16 @@
     <div class="grow">
       <.input field={@form[:text]} type="text" label="Message"/>
     </div>
+    <div class="grow">
+      <.input
+          field={@form[:type]}
+          type="select"
+          label="Type"
+          options={[{"single", "single"}, {"group", "group"}]}
+          required
+        />
+      <.input field={@form[:text]} type="text" label="Message"/>
+    </div>
     <div class="grow mb-2">
       <.input
           field={@form[:recipients]}

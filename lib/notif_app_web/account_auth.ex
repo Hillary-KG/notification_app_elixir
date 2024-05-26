@@ -218,7 +218,16 @@ defmodule NotifAppWeb.AccountAuth do
   """
   def require_authenticated_account(conn, _opts) do
     if conn.assigns[:current_account] do
-      conn
+      cond do
+        conn.assigns.current_account.status == "active" ->
+          conn
+        true ->
+          conn
+          |> put_flash(:error, "Your account is inactive. Contact admin for assistance")
+          |> maybe_store_return_to()
+          |> redirect(to: ~p"/accounts/log_in")
+          |> halt()
+      end
     else
       conn
       |> put_flash(:error, "You must log in to access this page.")
@@ -239,7 +248,7 @@ defmodule NotifAppWeb.AccountAuth do
   end
 
   def require_admin_user(%{current_account: current_account} = conn, _opts) do
-    IO.inspect(current_account)
+    # IO.inspect(current_account)
     if current_account.is_admin do
       conn
     else

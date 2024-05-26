@@ -4,6 +4,8 @@ defmodule NotifApp.Users do
   """
 
   import Ecto.Query, warn: false
+  alias NotifApp.Accounts.Account
+  alias NotifApp.Accounts
   alias NotifApp.Repo
 
   alias NotifApp.Users.User
@@ -35,12 +37,16 @@ defmodule NotifApp.Users do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id), do: Repo.get!(User, id) |> Repo.preload(:account) |> Repo.preload(:messages) |> Repo.preload(:contacts)
+
 
   def get_user_by_account_id(account_id) do
     User
     |> where(account_id: ^account_id)
     |> Repo.one()
+    |> Repo.preload(:account)
+    |> Repo.preload(:messages)
+    |> Repo.preload(:contacts)
   end
 
   @doc """
@@ -78,6 +84,11 @@ defmodule NotifApp.Users do
 
   """
   def update_user(%User{} = user, attrs) do
+    acccount =
+      Accounts.get_account!(user.account)
+      |> Account.update_changeset(%{"status" => "inactive"})
+      |> Repo.update()
+
     user
     |> User.changeset(attrs)
     |> Repo.update()
@@ -95,8 +106,15 @@ defmodule NotifApp.Users do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
+  def delete_user(%User{} = user, attrs \\ {}) do
+    # Repo.delete(user)
+    IO.inspect(user.account)
+    user.account
+      |> Accounts.update_account(attrs)
+
+    user
+    |> User.changeset(attrs)
+    |> Repo.update()
   end
 
   @doc """

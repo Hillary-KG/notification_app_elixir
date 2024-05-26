@@ -58,14 +58,25 @@ defmodule NotifApp.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_account!(id), do: Repo.get!(Account, id)
+  def get_account!(id), do: Repo.get!(Account, id)|> Repo.preload(:user)
 
+  def list_users() do
+    Repo.all(from account in Account,
+    preload: [user: :messages]
+  )
+    # Account
+    # |> Repo.all()
+    # |> Repo.preload(:user)
+  end
 
   def list_admins() do
-    Account
-    |> where(is_admin: true)
-    |> Repo.all()
-    |> Repo.preload(:user)
+    Repo.all(from account in Account,
+      preload: [user: [:messages]]
+    )
+    # Account
+    # |> where(is_admin: true)
+    # |> Repo.all()
+    # |> Repo.preload(:user)
   end
 
   def list_superusers() do
@@ -367,5 +378,20 @@ defmodule NotifApp.Accounts do
       {:ok, %{account: account}} -> {:ok, account}
       {:error, :account, changeset, _} -> {:error, changeset}
     end
+  end
+
+  def update_account(account, attrs \\ {}) do
+    account
+    |> Account.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_account(account) do
+    Repo.delete(account)
+  end
+
+
+  def change_account(account, attrs \\ %{}) do
+    Account.update_changeset(account, attrs)
   end
 end

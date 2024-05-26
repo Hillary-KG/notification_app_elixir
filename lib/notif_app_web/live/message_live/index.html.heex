@@ -19,7 +19,7 @@
   <:col :let={{_id, message}} label="Text"><%= message.text %></:col>
   <:col :let={{_id, message}} label="Type"><%= message.type %></:col>
   <:col :let={{_id, message}} label="Status"><%= message.status %></:col>
-  <:col :let={{_id, message}} label="Time"><%= message.inserted_at %></:col>
+  <:col :let={{_id, message}} label="Time"><%= Calendar.strftime(@message.inserted_at, "%y-%m-%d %I:%M:%S %p") %></:col>
   <:action :let={{_id, message}}>
     <div class="sr-only">
       <.link navigate={~p"/messages/#{message}"}>Show</.link>
@@ -36,13 +36,17 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="message-modal" show on_cancel={JS.patch(~p"/messages")}>
+<.modal :if={@live_action in [:new, :edit]} id="message-modal" show on_cancel={JS.patch(~p"/home")}>
   <.live_component
     module={NotifAppWeb.MessageLive.FormComponent}
     id={@message.id || :new}
     title={@page_title}
     action={@live_action}
     message={@message}
-    patch={~p"/messages"}
+    contacts={@contacts}
+    groups={@groups}
+    patch={~p"/home"}
+    msg_type={""}
+    user_id={@user_id}
   />
 </.modal>

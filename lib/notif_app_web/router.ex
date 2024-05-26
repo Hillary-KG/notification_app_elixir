@@ -17,6 +17,10 @@ defmodule NotifAppWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # pipeline :admin do
+
+  # end
+
   scope "/", NotifAppWeb do
     pipe_through :browser
 
@@ -70,21 +74,35 @@ defmodule NotifAppWeb.Router do
       live "/accounts/settings/confirm_email/:token", AccountSettingsLive, :confirm_email
 
       #messages
-      live "/home",  MessageLive.Index, :index
-      live "/messages/new", MessageLive.New
+      live "/home",  UserLive.Index, :index
+      live "/messages/new", MessageLive.Index, :new
+      live "/messages/:id", MessageLive.Show, :show
+
+      # contacts route
       live "/contacts", ContactLive.Index, :index
       live "/contacts/new", ContactLive.Index, :new
+      live "/contacts/:id/edit", ContactLive.Index, :edit
+      live "/contacts/delete", ContactLive.Index, :delete
+
+      # group routes
+      live "/groups", GroupLive.Index, :index
+      live "/groups/new", GroupLive.Index, :new
+      live "/groups/edit/:id", GroupLive.Index, :edit
+      live "/groups/delete/:id", GroupLive.Index, :delete
+
     end
   end
 
-  scope "/admin_dashboard", NotifAppWeb do
+  scope "/admin", NotifAppWeb do
     pipe_through [:browser, :require_admin_user, :require_superuser]
 
     live_session :require_admin_user,
       on_mount: [{NotifAppWeb.AccountAuth, :ensure_admin}] do
       live "/home", AdminLive.Index
-      live "/users", UserLive.Index
-      live "/users/update/:id", UserLive.Update
+      live "/users", AdminLive.Index, :index
+      live "/users/:id/update_account", AdminLive.Index, :update_account
+      live "/users/:id/update_user", AdminLive.Index, :update_user
+      live "/users/:id", AdminLive.User, :user
       end
     live_session :require_superuser,
       on_mount: [{NotifAppWeb.AccountAuth, :ensure_superuser}] do

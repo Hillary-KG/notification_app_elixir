@@ -15,6 +15,7 @@
   <:col :let={{_id, contact}} label="First Name"><%= contact.first_name %></:col>
   <:col :let={{_id, contact}} label="Last Name"><%= contact.last_name %></:col>
   <:col :let={{_id, contact}} label="Email Address"><%= contact.email_address %></:col>
+  <:col :let={{_id, contact}} label="Created At"><%= Calendar.strftime(contact.inserted_at, "%y-%m-%d %I:%M:%S %p") %></:col>
   <:action :let={{_id, contact}}>
     <div class="sr-only">
       <.link navigate={~p"/contacts/#{contact}"}>Show</.link>
@@ -30,7 +31,7 @@
     </.link>
   </:action>
 </.table>
-
+<.back navigate={~p"/home"}>Home</.back>
 <.modal :if={@live_action in [:new, :edit]} id="contact-modal" show on_cancel={JS.patch(~p"/contacts")}>
   <.live_component
     module={NotifAppWeb.ContactLive.FormComponent}

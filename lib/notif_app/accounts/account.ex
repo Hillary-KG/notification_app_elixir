@@ -159,4 +159,9 @@ defmodule NotifApp.Accounts.Account do
       add_error(changeset, :current_password, "is not valid")
     end
   end
+
+  def update_changeset(account, attrs) do
+    account
+    |> cast(attrs, [:is_admin, :is_superuser, :status])
+  end
 end

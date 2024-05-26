@@ -1,4 +1,5 @@
 defmodule NotifAppWeb.MessageLive.New do
+  alias NotifApp.Groups
   alias NotifApp.Contacts
   alias NotifApp.Users
   alias NotifApp.Mailer
@@ -11,6 +12,10 @@ defmodule NotifAppWeb.MessageLive.New do
     account_id = socket.assigns.current_account.id
     user = Users.get_user_by_account_id(account_id)
     contacts = Contacts.list_contacts(user.id)
+    groups = Groups.list_groups(user.id)
+    group_names =
+      groups
+      |> Enum.map(fn %{id: id, name: name} -> {id, name} end)
     contact_options =
       contacts
       |> Enum.map(fn %{first_name: first_name, email_address: email_address} -> {first_name, email_address} end)
@@ -19,6 +24,7 @@ defmodule NotifAppWeb.MessageLive.New do
     socket =
       socket
       |> assign(:contacts, contact_options)
+      |> assign(:groups, group_names)
       |> assign(
         :form,
         to_form(changeset)
@@ -30,6 +36,10 @@ defmodule NotifAppWeb.MessageLive.New do
     account_id = socket.assigns.current_account.id
     user = Users.get_user_by_account_id(account_id)
     IO.inspect(user.id)
+    # case message_params["type"] do
+    #    ->
+
+    # end
     params = message_params
     |> Map.put("user_id", user.id)
     |> Map.put("type", "single")
